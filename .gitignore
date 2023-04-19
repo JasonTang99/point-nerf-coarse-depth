@@ -1,0 +1,8 @@
+data_src/
+checkpoints/
+*.pyc
+.vscode/
+.ipynb_checkpoints/
+dtu_configs/
+nerf_synth_configs/
+*.mov

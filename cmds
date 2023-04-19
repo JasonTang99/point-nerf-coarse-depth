@@ -1,0 +1,2 @@
+python read_bag.py -f 20230320_165156.bag -s
+python pointcloud.py -f 20230320_165156.npy
