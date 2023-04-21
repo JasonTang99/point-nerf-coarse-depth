@@ -1,2 +1,15 @@
 python read_bag.py -f 20230320_165156.bag -s
 python pointcloud.py -f 20230320_165156.npy
+
+# PointNeRF
+# NeRF Synthetics using MVSNet (w/ alpha channel filtering during point cloud reconstruction and pycuda)
+bash dev_scripts/w_n360/chair.sh
+
+# NeRF Synthetics using MVSNet (w/ background color filtering during point cloud reconstruction and pytorch cuda)
+bash dev_scripts/w_n360/chair_cuda.sh
+
+# NeRF Synthetics using COLMAP points
+bash dev_scripts/w_colmap_n360/col_chair.sh
+
+# Tanks & Temples
+bash dev_scripts/w_tt_ft/barn.sh
