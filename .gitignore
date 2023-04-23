@@ -6,3 +6,4 @@ checkpoints/
 dtu_configs/
 nerf_synth_configs/
 *.mov
+*.bag
