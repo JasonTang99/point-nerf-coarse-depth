@@ -7,10 +7,11 @@ def get_images(
         start_idx=0,
         end_idx=None,
         bag_fp="data/aligned/color_sample.bag",
-        color_path="data/aligned/color.npy",
-        depth_path="data/aligned/depth.npy",
+        color_path=None,
+        depth_path=None,
         align=True,
-        median=True
+        median=True,
+        verbose=False
     ):
     """
     Gets color and depth images from a bag file
@@ -54,7 +55,6 @@ def get_images(
         for i in range(start_idx):
             frames = pipeline.wait_for_frames(timeout_ms=1000)
 
-        print(f"Starting at frame {start_idx} and ending at {end_idx}")
         for i in range(start_idx, end_idx):
             frames = pipeline.wait_for_frames(timeout_ms=1000)
 
@@ -69,23 +69,27 @@ def get_images(
             ).copy())
 
     except Exception as e:
-        print("Error getting frames")
-        print(e)
+        if verbose:
+            print("Error getting frames")
+            print(e)
     finally:
         pipeline.stop()
-    print(f"Got {len(depth_imgs)} frames")
+    if verbose:
+        print(f"Got {len(depth_imgs)} frames")
 
     # Stack and save images
     depth_imgs = np.stack(depth_imgs)
     color_imgs = np.stack(color_imgs)
 
     if color_path is not None and depth_path is not None:
-        print("Saving images to {} and {}".format(color_path, depth_path))
+        if verbose:
+            print("Saving images to {} and {}".format(color_path, depth_path))
         np.save(color_path, color_imgs)
         np.save(depth_path, depth_imgs)
 
     if median:
-        print(f"Taking median of {color_imgs.shape[0]} images")
+        if verbose:
+            print(f"Taking median of {color_imgs.shape[0]} images")
         color_imgs = np.median(color_imgs, axis=0).astype(np.uint8)
         depth_imgs = np.median(depth_imgs, axis=0).astype(np.uint16)
     

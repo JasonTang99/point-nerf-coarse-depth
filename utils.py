@@ -94,7 +94,16 @@ def colordepth_to_rgbd(color_img, depth_img):
         color_raw, depth_raw, convert_rgb_to_intensity=False)
     return rgbd_image
 
-
+# RGBD to point cloud
+def rgbd_to_pcd(rgbd_image, intrinsics, extrinsics=np.eye(4), voxel_size=None):
+    pcd = o3d.geometry.PointCloud.create_from_rgbd_image(
+        rgbd_image, 
+        intrinsics, 
+        extrinsics
+    )
+    if voxel_size is not None:
+        pcd = pcd.voxel_down_sample(voxel_size=voxel_size)
+    return pcd
 
 
 if __name__ == "__main__":
