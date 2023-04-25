@@ -8,3 +8,4 @@ nerf_synth_configs/
 *.mov
 *.bag
 *.ply
+output/

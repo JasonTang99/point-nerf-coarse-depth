@@ -105,6 +105,23 @@ def rgbd_to_pcd(rgbd_image, intrinsics, extrinsics=np.eye(4), voxel_size=None):
         pcd = pcd.voxel_down_sample(voxel_size=voxel_size)
     return pcd
 
+# Remove outliers from point cloud
+def remove_outliers(pcd, nb_neighbors=None, std_ratio=None, 
+        nb_points=None, radius=None):
+    # Statistical outlier removal
+    if nb_neighbors is not None and std_ratio is not None:
+        pcd, _ = pcd.remove_statistical_outlier(
+            nb_neighbors=nb_neighbors,
+            std_ratio=std_ratio
+        )
+    # Radius outlier removal
+    if nb_points is not None and radius is not None:
+        pcd, _ = pcd.remove_radius_outlier(
+            nb_points=nb_points,
+            radius=radius
+        )
+    return pcd
+
 
 if __name__ == "__main__":
     depth_ints, color_ints = get_o3d_intrinsics()
