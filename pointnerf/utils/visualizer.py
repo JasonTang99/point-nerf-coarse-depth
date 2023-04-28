@@ -43,6 +43,8 @@ class Visualizer:
         self.point_dir = os.path.join(opt.checkpoints_dir, opt.name, 'points')
         self.vid_dir = os.path.join(opt.checkpoints_dir, opt.name, 'vids')
         os.makedirs(self.vid_dir, exist_ok=True)
+        # os.makedirs(self.image_dir, exist_ok=True)
+        # os.makedirs(self.point_dir, exist_ok=True)
 
         if opt.show_tensorboard > 0:
             from tensorboardX import SummaryWriter
@@ -72,6 +74,7 @@ class Visualizer:
                 img = np.array(img)
                 filename = 'step-{:04d}-{}.png'.format(total_steps, name)
                 filepath = os.path.join(self.image_dir, filename)
+                print('========== saving image to {}'.format(filepath))
                 save_image(img, filepath)
 
     def display_video(self, visual_lst, total_steps):

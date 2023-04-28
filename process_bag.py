@@ -32,8 +32,13 @@ def get_images(
 
     pipeline_wrapper = rs.pipeline_wrapper(pipeline)
     pipeline_profile = config.resolve(pipeline_wrapper)
-    config.enable_stream(rs.stream.depth, 848, 480, rs.format.z16, 30)
-    config.enable_stream(rs.stream.color, 640, 480, rs.format.rgb8, 30)
+
+    # device = pipeline_profile.get_device()
+    # for s in device.sensors:
+    #     print(s.get_info(rs.camera_info.name))
+
+    config.enable_stream(rs.stream.depth) #, rs.format.z16)
+    config.enable_stream(rs.stream.color) #, rs.format.rgb8)
 
     # Start streaming
     profile = pipeline.start(config)
@@ -81,6 +86,9 @@ def get_images(
     depth_imgs = np.stack(depth_imgs)
     color_imgs = np.stack(color_imgs)
 
+    # print(depth_imgs.shape, depth_imgs.dtype)
+    # print(color_imgs.shape, color_imgs.dtype)
+
     if color_path is not None and depth_path is not None:
         if verbose:
             print("Saving images to {} and {}".format(color_path, depth_path))
@@ -107,7 +115,8 @@ if __name__ == "__main__":
     #     median = False
     # )
 
-    bag_fp = "data/pose/checkerboard.bag"
+    # bag_fp = "data/pose/checkerboard.bag"
+    bag_fp = "data/books/bags/20230426_182739.bag"
     color_path = None
     depth_path = None
 

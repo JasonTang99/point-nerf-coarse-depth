@@ -137,6 +137,11 @@ def gen_points_filter_embeddings(dataset, visualizer, opt):
 
         if opt.vox_res > 0:
             xyz_world_all, sparse_grid_idx, sampled_pnt_idx = mvs_utils.construct_vox_points_closest(xyz_world_all.cuda() if len(xyz_world_all) < 99999999 else xyz_world_all[::(len(xyz_world_all)//99999999+1),...].cuda(), opt.vox_res)
+            print(sampled_pnt_idx)
+            print(points_vid)
+            print(points_vid.device, sampled_pnt_idx.device)
+            sampled_pnt_idx = sampled_pnt_idx.cpu()
+            
             points_vid = points_vid[sampled_pnt_idx,:]
             confidence_filtered_all = confidence_filtered_all[sampled_pnt_idx]
             print("after voxelize:", xyz_world_all.shape, points_vid.shape)
@@ -232,7 +237,7 @@ def render_vid(model, dataset, visualizer, opt, bg_info, steps=0, gen_vid=True):
             visualizer.print_details("{}:{}".format(key, visuals[key].shape))
             visuals[key] = visuals[key].reshape(height, width, 3)
         print("num.{} in {} cases: time used: {} s".format(i, total_num // opt.test_num_step, time.time() - stime), " at ", visualizer.image_dir)
-        visualizer.display_current_results(visuals, i)
+        visualizer.display_current_results(visuals, i, opt)
 
     # visualizer.save_neural_points(200, np.concatenate(cam_posts, axis=0),None, None, save_ref=False)
     # visualizer.save_neural_points(200, np.concatenate(cam_dirs, axis=0),None, None, save_ref=False)
@@ -437,11 +442,13 @@ def probe_hole(model, dataset, visualizer, opt, bg_info, test_steps=0, opacity_t
     visualizer.reset()
 
     max_num = len(dataset) // opt.prob_num_step
+    print("max_num", max_num)
     take_top = False
     if opt.prob_top == 1 and opt.prob_mode <= 0: # and opt.far_thresh <= 0:
         if getattr(model, "top_ray_miss_ids", None) is not None:
             mask = model.top_ray_miss_loss[:-1] > 0.0
             frame_ids = model.top_ray_miss_ids[:-1][mask][:max_num]
+            print(max_num, frame_ids)
             print(len(frame_ids), max_num)
             print("prob frame top_ray_miss_loss:", model.top_ray_miss_loss)
             take_top = True

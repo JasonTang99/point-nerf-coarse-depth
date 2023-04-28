@@ -361,7 +361,6 @@ class NerfSynth360FtDataset(BaseDataset):
         # plydata (PlyProperty('x', 'double'), PlyProperty('y', 'double'), PlyProperty('z', 'double'), PlyProperty('nx', 'double'), PlyProperty('ny', 'double'), PlyProperty('nz', 'double'), PlyProperty('red', 'uchar'), PlyProperty('green', 'uchar'), PlyProperty('blue', 'uchar'))
         print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
         print("plydata", plydata.elements[0])
-        exit(0)
         x,y,z=torch.as_tensor(plydata.elements[0].data["x"].astype(np.float32), device="cuda", dtype=torch.float32), torch.as_tensor(plydata.elements[0].data["y"].astype(np.float32), device="cuda", dtype=torch.float32), torch.as_tensor(plydata.elements[0].data["z"].astype(np.float32), device="cuda", dtype=torch.float32)
         points_xyz = torch.stack([x,y,z], dim=-1).to(torch.float32)
 
@@ -431,10 +430,17 @@ class NerfSynth360FtDataset(BaseDataset):
             frame = self.meta['frames'][idx]
 
             image_path = os.path.join(self.data_dir, self.scan, f"{frame['file_path']}.png")
+            # print("image_path", image_path)
             self.image_paths += [image_path]
             img = Image.open(image_path)
             img = img.resize(self.img_wh, Image.Resampling.LANCZOS)
+            # print("img", img.size)
             img = self.transform(img)  # (4, h, w)
+            # print("img", img.shape)
+            # print(img[0])
+            # print(img[1])
+            # print(img[2])
+            # print(img[3])
             self.depths += [(img[-1:, ...] > 0.1).numpy().astype(np.float32)]
 
             self.mvsimgs += [img[:3] * img[-1:]]

@@ -13,3 +13,18 @@ bash dev_scripts/w_colmap_n360/col_chair.sh
 
 # Tanks & Temples
 bash dev_scripts/w_tt_ft/barn.sh
+
+
+
+bash dev_scripts/w_colmap_n360/real_guitar.sh
+bash dev_scripts/w_n360/guitar.sh
+
+
+rm -rf checkpoints/col_nerfsynth/guitar/
+rm -rf checkpoints/nerfsynth/guitar/
+
+rm -rf checkpoints/col_nerfsynth/chair/
+rm -rf checkpoints/nerfsynth/chair/
+rm -rf checkpoints/nerfsynth/chair_cuda/
+
+

@@ -544,10 +544,14 @@ class BaseRenderingModel(BaseModel):
                 unmasked_name = name[len("ray_masked")+1:]
                 masked_output = torch.masked_select(self.output[unmasked_name], (self.output["ray_mask"] > 0)[..., None].expand(-1, -1, 3)).reshape(1, -1, 3)
                 masked_gt = torch.masked_select(self.gt_image, (self.output["ray_mask"] > 0)[..., None].expand(-1, -1, 3)).reshape(1, -1, 3)
+                # print("masked_output", self.output[unmasked_name].requires_grad, self.output[unmasked_name].shape)
+                # print("masked_output", masked_output.requires_grad, masked_output.shape)
+                # print("masked_gt", masked_gt.requires_grad, masked_gt.shape)
                 if masked_output.shape[1] > 0:
                     loss = self.l2loss(masked_output, masked_gt)
                 else:
                     loss = torch.tensor(0.0, dtype=torch.float32, device=masked_output.device)
+                # loss.backward()
                 # print("loss", name, torch.max(torch.abs(loss)))
             elif name.startswith("ray_miss"):
                 unmasked_name = name[len("ray_miss") + 1:]
@@ -560,6 +564,7 @@ class BaseRenderingModel(BaseModel):
                     loss = self.l2loss(masked_output, masked_gt) * masked_gt.shape[1]
                 else:
                     loss = torch.tensor(0.0, dtype=torch.float32, device=masked_output.device)
+                # loss.backward()
 
             elif name.startswith("ray_depth_masked"):
                 pixel_xy = self.input["pixel_idx"][0].long()

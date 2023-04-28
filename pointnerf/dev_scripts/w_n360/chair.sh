@@ -130,7 +130,7 @@ niter_decay=10000 #250000
 n_threads=1
 train_and_test=0 #1
 test_num=10
-test_freq=10000 #1200 #1200 #30184 #30184 #50000
+test_freq=1200 #1200 #1200 #30184 #30184 #50000
 print_freq=40
 test_num_step=10
 

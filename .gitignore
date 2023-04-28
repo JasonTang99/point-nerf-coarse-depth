@@ -9,3 +9,4 @@ nerf_synth_configs/
 *.bag
 *.ply
 output/
+*.npy

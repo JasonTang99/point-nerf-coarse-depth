@@ -142,7 +142,8 @@ color_loss_weights=" 1.0 0.0 0.0 "
 color_loss_items='ray_masked_coarse_raycolor ray_miss_coarse_raycolor coarse_raycolor'
 test_color_loss_items='coarse_raycolor ray_miss_coarse_raycolor ray_masked_coarse_raycolor'
 
-vid=250000
+# vid=250000
+vid=50080
 
 bg_color="white" #"0.0,0.0,0.0,1.0,1.0,1.0"
 split="train"

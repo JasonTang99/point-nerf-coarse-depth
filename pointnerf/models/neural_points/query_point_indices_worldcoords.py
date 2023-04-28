@@ -64,9 +64,9 @@ class lighting_fast_querier():
         min_xyz = min_xyz - torch.as_tensor(scaled_vsize_np * self.opt.kernel_size / 2, device=min_xyz.device, dtype=torch.float32)
         max_xyz = max_xyz + torch.as_tensor(scaled_vsize_np * self.opt.kernel_size / 2, device=min_xyz.device, dtype=torch.float32)
 
-        ranges_np = torch.cat([min_xyz, max_xyz], dim=-1).cpu().numpy().astype(np.float32)
+        ranges_np = torch.cat([min_xyz, max_xyz], dim=-1).cpu().detach().numpy().astype(np.float32)
         # print("ranges_np",ranges_np)
-        vdim_np = (max_xyz - min_xyz).cpu().numpy() / vsize_np
+        vdim_np = (max_xyz - min_xyz).cpu().detach().numpy() / vsize_np
 
         scaled_vdim_np = np.ceil(vdim_np / vscale_np).astype(np.int32)
         ranges_gpu, scaled_vsize_gpu, scaled_vdim_gpu, vscale_gpu, kernel_size_gpu, query_size_gpu = np_to_gpuarray(

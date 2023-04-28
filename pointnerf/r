@@ -1,0 +1,3 @@
+#!/bin/bash
+bash dev_scripts/w_colmap_n360/real_guitar.sh
+

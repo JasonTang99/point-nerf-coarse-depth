@@ -1,0 +1,4 @@
+#!/bin/bash
+bash dev_scripts/w_n360/guitar.sh
+
+

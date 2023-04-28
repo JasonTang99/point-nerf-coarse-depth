@@ -1,0 +1,4 @@
+#!/bin/bash
+bash dev_scripts/w_colmap_n360/col_chair.sh
+
+
