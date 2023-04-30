@@ -19,9 +19,16 @@ bash dev_scripts/w_tt_ft/barn.sh
 bash dev_scripts/w_colmap_n360/real_guitar.sh
 bash dev_scripts/w_n360/guitar.sh
 
+r4 189,000 8.26
+r4 689,000 29.30
+r5 689,000 29.30
+
 
 rm -rf checkpoints/col_nerfsynth/guitar/
 rm -rf checkpoints/nerfsynth/guitar/
+
+rm -rf checkpoints/nerfsynth/books
+mv checkpoints/nerfsynth/books checkpoints/nerfsynth/books_tmp
 
 rm -rf checkpoints/col_nerfsynth/chair/
 rm -rf checkpoints/nerfsynth/chair/

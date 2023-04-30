@@ -10,3 +10,7 @@ nerf_synth_configs/
 *.ply
 output/
 *.npy
+data/**/*.png
+sparse/
+dense/
+*.db
