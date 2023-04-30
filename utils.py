@@ -4,13 +4,15 @@ import cv2
 import os
 import json
 import open3d as o3d
+import matplotlib.pyplot as plt
+import copy
 
 # Gets the intrinsics of depth and color streams
-def get_intrinsics(depth_ints_path, color_ints_path):
+def get_intrinsics(depth_ints_path, color_ints_path, 
+        bag_fp = "data/aligned/color_sample.bag"):
+    
     pipeline = rs.pipeline()
     config = rs.config()
-
-    bag_fp = "objects/color_sample.bag"
     rs.config.enable_device_from_file(
         config, 
         bag_fp,
@@ -58,8 +60,7 @@ def get_intrinsics(depth_ints_path, color_ints_path):
     with open(color_ints_path, 'w') as f:
         json.dump(color_ints, f)
 
-
-# Load o3d intrinsics
+# intrinsics json to o3d intrinsics
 def _read_intrinsics(path):
     with open(path, 'r') as f:
         ints = json.load(f)
@@ -73,7 +74,7 @@ def _read_intrinsics(path):
         )
     return intrinsics
 
-# Get o3d intrinsics
+# Return o3d wrapped intrinsics
 def get_o3d_intrinsics():
     depth_path = "data/intrinsics/depth_intrinsics.json"
     color_path = "data/intrinsics/color_intrinsics.json"
@@ -82,16 +83,41 @@ def get_o3d_intrinsics():
     return depth_intrinsics, color_intrinsics
 
 
+# COLMAP Script from https://github.com/colmap/colmap/blob/dev/scripts/python/read_write_dense.py
+def read_colmap_array(path):
+    with open(path, "rb") as fid:
+        width, height, channels = np.genfromtxt(
+            fid, delimiter="&", max_rows=1,
+            usecols=(0, 1, 2), dtype=int
+        )
+        fid.seek(0)
+        num_delimiter = 0
+        byte = fid.read(1)
+        while True:
+            if byte == b"&":
+                num_delimiter += 1
+                if num_delimiter >= 3:
+                    break
+            byte = fid.read(1)
+        array = np.fromfile(fid, np.float32)
+    array = array.reshape((width, height, channels), order="F")
+    return np.transpose(array, (1, 0, 2)).squeeze()
+
+########### O3D UTILS ###########
+
 # Combine color and depth images into a single RGBD image
-def colordepth_to_rgbd(color_img, depth_img):
+def colordepth_to_rgbd(color_img, depth_img, depth_scale=1000.0):
     assert len(color_img.shape) == 3
     assert len(depth_img.shape) == 2 or \
         (len(depth_img.shape) == 3 and depth_img.shape[2] == 1)
+    assert color_img.shape[0] == depth_img.shape[0] and \
+        color_img.shape[1] == depth_img.shape[1]
     
     color_raw = o3d.geometry.Image(color_img)
     depth_raw = o3d.geometry.Image(depth_img)
     rgbd_image = o3d.geometry.RGBDImage.create_from_color_and_depth(
-        color_raw, depth_raw, convert_rgb_to_intensity=False)
+        color_raw, depth_raw, convert_rgb_to_intensity=False, 
+        depth_trunc=1000, depth_scale=depth_scale)
     return rgbd_image
 
 # RGBD to point cloud
@@ -104,6 +130,19 @@ def rgbd_to_pcd(rgbd_image, intrinsics, extrinsics=np.eye(4), voxel_size=None):
     if voxel_size is not None:
         pcd = pcd.voxel_down_sample(voxel_size=voxel_size)
     return pcd
+
+# Generate Point Clouds
+def gen_pcds(color_imgs, depth_imgs, intrinsics, cb_scale=1.0, depth_scale=1000.0):
+    pcds_full = []
+    for color_img, depth_img in zip(color_imgs, depth_imgs):
+        # Color + Depth -> RGBD image -> Pointcloud
+        rgbd_img = colordepth_to_rgbd(color_img, depth_img, depth_scale)
+        pcd = rgbd_to_pcd(rgbd_img, intrinsics)
+
+        # Scale the pointcloud
+        pcd.scale(cb_scale, center=[0,0,0])
+        pcds_full.append(pcd)
+    return pcds_full
 
 # Remove outliers from point cloud
 def remove_outliers(pcd, nb_neighbors=None, std_ratio=None, 
@@ -121,6 +160,75 @@ def remove_outliers(pcd, nb_neighbors=None, std_ratio=None,
             radius=radius
         )
     return pcd
+
+# Align and downsample point clouds
+def align_pcds(pcds, c2w_exts, voxel_size=None):
+    pcds_align = []
+    for i in range(len(pcds)):
+        pcd = copy.deepcopy(pcds[i])
+        pcd.transform(c2w_exts[i])
+        if voxel_size is not None:
+            pcd = pcd.voxel_down_sample(voxel_size=voxel_size)
+        pcds_align.append(pcd)
+    return pcds_align
+
+
+
+########### CAMERA CALIBRATION ###########
+# Finetune chessboard corners
+def finetune_corners(gray, corners, criteria, size=6):
+    corners2 = cv2.cornerSubPix(gray,corners,(size, size),(-1,-1),criteria)
+    # Arrange corner order
+    x1, y1 = corners2[0, 0]
+    x2, y2 = corners2[-1, 0]
+    flip = False
+    if x1 > x2 or y1 < y2:
+        corners2 = corners2[::-1]
+        flip = True
+    return corners2, flip
+
+
+########### PLOTTING AND VISUALIZATION ###########
+# Makes plt grid of images
+def show_imgs(imgs, titles=None, width=2):
+    if titles is not None: assert len(imgs) == len(titles)
+    f = lambda x: (x + width - 1) // width
+    n = len(imgs)
+    fig, axs = plt.subplots(f(n), width, figsize=(16, 6*f(n)))
+    for i, ax in enumerate(axs.flatten()):
+        if i >= n: break
+        ax.imshow(imgs[i])
+        if titles is not None: 
+            ax.set_title(titles[i])
+        ax.axis("off")
+    plt.tight_layout()
+    plt.show()
+
+# Draw origin axis from chessboard corners on image
+def draw_axis(img, corners, imgpts):
+    corner = tuple(corners[0].ravel())
+    corner = (int(corner[0]), int(corner[1]))
+    imgpts = np.int32(imgpts).reshape(-1,2)
+
+    img = cv2.line(img, corner, tuple(imgpts[0].ravel()), (255,0,0), 5)
+    img = cv2.line(img, corner, tuple(imgpts[1].ravel()), (0,255,0), 5)
+    img = cv2.line(img, corner, tuple(imgpts[2].ravel()), (0,0,255), 5)
+    return img
+
+# Generate Cameras from c2w_exts
+def gen_cameras(c2w_exts, camera_size=0.1):
+    cameras = []
+    for c2w_ext in c2w_exts:
+        # Create a camera frame
+        camera = o3d.geometry.TriangleMesh.create_coordinate_frame(
+            size=camera_size, origin=[0,0,0])
+        camera.transform(c2w_ext)
+        cameras.append(camera)
+    return cameras
+
+
+
+
 
 
 if __name__ == "__main__":

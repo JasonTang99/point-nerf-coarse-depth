@@ -105,22 +105,10 @@ def get_images(
 
 
 if __name__ == "__main__":
-    # color_imgs, depth_imgs = get_images(
-    #     start_idx = 0,
-    #     end_idx = 10,
-    #     bag_fp="data/aligned/color_sample.bag",
-    #     color_path="data/aligned/color.npy",
-    #     depth_path="data/aligned/depth.npy",
-    #     align = True,
-    #     median = False
-    # )
-
     # bag_fp = "data/pose/checkerboard.bag"
     bag_fp = "data/books/bags/20230426_182739.bag"
     color_path = None
     depth_path = None
-
-
 
     color_imgs, depth_imgs = get_images(
         start_idx=0,
