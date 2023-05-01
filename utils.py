@@ -103,9 +103,8 @@ def read_colmap_array(path):
     array = array.reshape((width, height, channels), order="F")
     return np.transpose(array, (1, 0, 2)).squeeze()
 
-########### O3D UTILS ###########
 
-# Combine color and depth images into a single RGBD image
+########### O3D UTILS ###########
 def colordepth_to_rgbd(color_img, depth_img, depth_scale=1000.0):
     assert len(color_img.shape) == 3
     assert len(depth_img.shape) == 2 or \
@@ -120,7 +119,6 @@ def colordepth_to_rgbd(color_img, depth_img, depth_scale=1000.0):
         depth_trunc=1000, depth_scale=depth_scale)
     return rgbd_image
 
-# RGBD to point cloud
 def rgbd_to_pcd(rgbd_image, intrinsics, extrinsics=np.eye(4), voxel_size=None):
     pcd = o3d.geometry.PointCloud.create_from_rgbd_image(
         rgbd_image, 
@@ -131,7 +129,6 @@ def rgbd_to_pcd(rgbd_image, intrinsics, extrinsics=np.eye(4), voxel_size=None):
         pcd = pcd.voxel_down_sample(voxel_size=voxel_size)
     return pcd
 
-# Generate Point Clouds
 def gen_pcds(color_imgs, depth_imgs, intrinsics, cb_scale=1.0, depth_scale=1000.0):
     pcds_full = []
     for color_img, depth_img in zip(color_imgs, depth_imgs):
@@ -143,6 +140,19 @@ def gen_pcds(color_imgs, depth_imgs, intrinsics, cb_scale=1.0, depth_scale=1000.
         pcd.scale(cb_scale, center=[0,0,0])
         pcds_full.append(pcd)
     return pcds_full
+
+# Align and downsample point clouds
+def align_pcds(pcds, c2w_exts, voxel_size=None):
+    pcds_align = []
+    for i in range(len(pcds)):
+        pcd = copy.deepcopy(pcds[i])
+        pcd.transform(c2w_exts[i])
+        if voxel_size is not None:
+            pcd = pcd.voxel_down_sample(voxel_size=voxel_size)
+        pcds_align.append(pcd)
+    return pcds_align
+
+
 
 # Remove outliers from point cloud
 def remove_outliers(pcd, nb_neighbors=None, std_ratio=None, 
@@ -160,17 +170,6 @@ def remove_outliers(pcd, nb_neighbors=None, std_ratio=None,
             radius=radius
         )
     return pcd
-
-# Align and downsample point clouds
-def align_pcds(pcds, c2w_exts, voxel_size=None):
-    pcds_align = []
-    for i in range(len(pcds)):
-        pcd = copy.deepcopy(pcds[i])
-        pcd.transform(c2w_exts[i])
-        if voxel_size is not None:
-            pcd = pcd.voxel_down_sample(voxel_size=voxel_size)
-        pcds_align.append(pcd)
-    return pcds_align
 
 
 
