@@ -290,6 +290,11 @@ def test(model, dataset, visualizer, opt, bg_info, test_steps=0, gen_vid=False, 
             end = min([k + chunk_size, totalpixel])
             data['raydir'] = raydir[:, start:end, :]
             data["pixel_idx"] = pixel_idx[:, start:end, :]
+
+            gc.collect()
+            torch.cuda.empty_cache()
+            torch.cuda.synchronize()
+
             model.set_input(data)
 
             if opt.bgmodel.endswith("plane"):
@@ -929,6 +934,9 @@ def main():
                     visualizer.print_details(
                         'nothing to probe, max ray miss is only {}'.format(model.top_ray_miss_loss[0]))
 
+            gc.collect()
+            torch.cuda.empty_cache()
+            torch.cuda.synchronize()
 
             total_steps += 1
             model.set_input(data)

@@ -544,7 +544,14 @@ class BaseRenderingModel(BaseModel):
                 unmasked_name = name[len("ray_masked")+1:]
                 masked_output = torch.masked_select(self.output[unmasked_name], (self.output["ray_mask"] > 0)[..., None].expand(-1, -1, 3)).reshape(1, -1, 3)
                 masked_gt = torch.masked_select(self.gt_image, (self.output["ray_mask"] > 0)[..., None].expand(-1, -1, 3)).reshape(1, -1, 3)
-                # print("masked_output", self.output[unmasked_name].requires_grad, self.output[unmasked_name].shape)
+                
+                # EDITED BY JASON
+                # print("masked_output", 
+                #     self.output[unmasked_name].requires_grad, 
+                #     self.output[unmasked_name].shape, 
+                #     masked_output.requires_grad, 
+                #     masked_output.shape
+                # )
                 # print("masked_output", masked_output.requires_grad, masked_output.shape)
                 # print("masked_gt", masked_gt.requires_grad, masked_gt.shape)
                 if masked_output.shape[1] > 0:
@@ -605,6 +612,10 @@ class BaseRenderingModel(BaseModel):
                 # print("no_mask")
                 loss = self.l2loss(self.output[name], self.gt_image)
                 # print("loss", name, torch.max(torch.abs(loss)))
+            
+            if not loss.requires_grad:
+                loss = torch.tensor(0.0, dtype=torch.float32, device=masked_output.device, requires_grad=True)
+            
             self.loss_total += (loss * opt.color_loss_weights[i] + 1e-6)
             # loss.register_hook(lambda grad: print(torch.any(torch.isnan(grad)), grad, opt.color_loss_weights[i]))
 

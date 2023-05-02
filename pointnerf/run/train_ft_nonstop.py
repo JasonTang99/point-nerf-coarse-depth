@@ -137,6 +137,12 @@ def gen_points_filter_embeddings(dataset, visualizer, opt):
 
         if opt.vox_res > 0:
             xyz_world_all, sparse_grid_idx, sampled_pnt_idx = mvs_utils.construct_vox_points_closest(xyz_world_all.cuda() if len(xyz_world_all) < 99999999 else xyz_world_all[::(len(xyz_world_all)//99999999+1),...].cuda(), opt.vox_res)
+            
+            print(sampled_pnt_idx)
+            print(points_vid)
+            print(points_vid.device, sampled_pnt_idx.device)
+            sampled_pnt_idx = sampled_pnt_idx.cpu()
+
             points_vid = points_vid[sampled_pnt_idx,:]
             confidence_filtered_all = confidence_filtered_all[sampled_pnt_idx]
             print("after voxelize:", xyz_world_all.shape, points_vid.shape)
@@ -921,6 +927,9 @@ def main():
                     visualizer.print_details(
                         'nothing to probe, max ray miss is only {}'.format(model.top_ray_miss_loss[0]))
 
+            gc.collect()
+            torch.cuda.empty_cache()
+            torch.cuda.synchronize()
 
             total_steps += 1
             model.set_input(data)

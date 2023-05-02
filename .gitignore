@@ -3,8 +3,8 @@ checkpoints/
 *.pyc
 .vscode/
 .ipynb_checkpoints/
-dtu_configs/
-nerf_synth_configs/
+# dtu_configs/
+# nerf_synth_configs/
 *.mov
 *.bag
 *.ply
@@ -14,3 +14,6 @@ data/**/*.png
 sparse/
 dense/
 *.db
+do_not_submit/
+__pycache__/
+csc2530_data/

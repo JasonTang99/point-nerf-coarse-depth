@@ -11,7 +11,6 @@ def pairwise_registration(
         source, target, max_correspondence_distance_coarse,
         max_correspondence_distance_fine
     ):
-    # print("Apply point-to-plane ICP")
     # Coarse ICP starting with identity matrix
     icp_coarse = o3d.pipelines.registration.registration_icp(
         source, 
@@ -53,7 +52,6 @@ def full_registration(
                 max_correspondence_distance_coarse,
                 max_correspondence_distance_fine,
             )
-            # print("Build o3d.pipelines.registration.PoseGraph")
             if target_id == source_id + 1:  # odometry case
                 odometry = np.dot(transformation_icp, odometry)
                 pose_graph.nodes.append(
