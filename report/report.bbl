@@ -1,0 +1,59 @@
+\begin{thebibliography}{1}\itemsep=-1pt
+
+\bibitem{EfficientNeRF}
+T. Hu, Shu Liu, Yilun Chen, Tiancheng Shen, and Jiaya Jia.
+\newblock Efficientnerf - efficient neural radiance fields.
+\newblock {\em 2022 IEEE/CVF Conference on Computer Vision and Pattern
+  Recognition (CVPR)}, pages 12892--12901, 2022.
+
+\bibitem{NeRF}
+Ben Mildenhall, Pratul~P. Srinivasan, Matthew Tancik, Jonathan~T. Barron, Ravi
+  Ramamoorthi, and Ren Ng.
+\newblock Nerf: Representing scenes as neural radiance fields for view
+  synthesis.
+\newblock In {\em European Conference on Computer Vision}, 2020.
+
+\bibitem{U2Net}
+Xuebin Qin, Zichen Zhang, Chenyang Huang, Masood Dehghan, Osmar Zaïane, and
+  Martin Jagersand.
+\newblock U2-net: Going deeper with nested u-structure for salient object
+  detection.
+\newblock {\em Pattern Recognition}, 106:107404, 10 2020.
+
+\bibitem{UNet}
+Olaf Ronneberger, Philipp Fischer, and Thomas Brox.
+\newblock U-net: Convolutional networks for biomedical image segmentation,
+  2015.
+
+\bibitem{COLMAP}
+Johannes~L. Sch{\"o}nberger, Enliang Zheng, Jan-Michael Frahm, and Marc
+  Pollefeys.
+\newblock Pixelwise view selection for unstructured multi-view stereo.
+\newblock In {\em European Conference on Computer Vision}, 2016.
+
+\bibitem{PointNeRF}
+Qiangeng Xu, Zexiang Xu, Julien Philip, Sai Bi, Zhixin Shu, Kalyan Sunkavalli,
+  and Ulrich Neumann.
+\newblock Point-nerf: Point-based neural radiance fields.
+\newblock {\em 2022 IEEE/CVF Conference on Computer Vision and Pattern
+  Recognition (CVPR)}, pages 5428--5438, 2022.
+
+\bibitem{MVSNet}
+Yao Yao, Zixin Luo, Shiwei Li, Tian Fang, and Long Quan.
+\newblock Mvsnet: Depth inference for unstructured multi-view stereo.
+\newblock In {\em European Conference on Computer Vision}, 2018.
+
+\bibitem{PixelNeRF}
+Alex Yu, Vickie Ye, Matthew Tancik, and Angjoo Kanazawa.
+\newblock pixelnerf: Neural radiance fields from one or few images.
+\newblock {\em 2021 IEEE/CVF Conference on Computer Vision and Pattern
+  Recognition (CVPR)}, pages 4576--4585, 2020.
+
+\bibitem{LPIPS}
+Richard Zhang, Phillip Isola, Alexei~A. Efros, Eli Shechtman, and Oliver Wang.
+\newblock The unreasonable effectiveness of deep features as a perceptual
+  metric.
+\newblock {\em 2018 IEEE/CVF Conference on Computer Vision and Pattern
+  Recognition}, pages 586--595, 2018.
+
+\end{thebibliography}

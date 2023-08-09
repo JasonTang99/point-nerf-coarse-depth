@@ -1,5 +1,34 @@
-# CSC2530 Project
+# Enhancing Point-NeRF with Stereoscopic Depth Sensors
 
+For a more detailed description of the project, please see the [final report](report/report.pdf).
+
+## Summary
+Neural Radiance Fields (NeRF) have recently gained attention for generating realistic 3D scenes from 2D images. However, NeRF's computational demands often hinder its practical applications. To address this challenge, we explored Point-NeRF, an extension that selectively samples points near an estimated point cloud. We conducted empirical experiments using stereoscopic depth sensors (Intel RealSense D435) for coarse point cloud initialization and compared it with alternative methods. Our findings reveal that incorporating stereoscopic depth sensors into the 3D scene reconstruction pipeline enhances novel view image quality while retaining the sample efficiency advantages of Point-NeRF.
+
+<!-- cams -->
+#### Camera Locations
+![Alt text](report/images/cams.png?raw=true "Real-World Experiments")
+
+## Experiments
+Real-world scenes ("books" and "bear") captured using a depth sensor were processed through Point-NeRF, yielding comparable results in generating new views without the time-intensive MVSNet initialization. While the MVSNet initialization method outperforms ours in PSNR and SSIM, our method performs competitively in LPIPS, a more advanced metric approximating human similarity perception. Despite hardware limitations, our approach demonstrates potential for enhancing Point-NeRF's efficiency and performance in 3D scene reconstruction. Challenges encountered include alignment issues and object segmentation failures.
+
+<!-- books -->
+#### Novel Generated Views - Books Scene
+![Alt text](report/images/books.png?raw=true "Books")
+
+<!-- bear -->
+#### Novel Generated Views - Bear Scene
+![Alt text](report/images/bear.png?raw=true "Bear")
+
+## Conclusions
+The integration of stereoscopic depth sensors to initialize point clouds in Point-NeRF holds promise for elevating novel view image quality and streamlining preprocessing time. Future endeavors will focus on hyperparameter optimization, broader method comparisons across diverse scenes, and investigating the fusion of depth images into multiview stereo techniques.
+
+<!-- loss -->
+#### Metrics over training iterations
+![Alt text](report/images/loss.png?raw=true "Loss")
+
+
+<!-- ############################################################################################ -->
 ## File Structure
 * ```data/``` - the data collected from the real-world experiments. (Not uploaded to GitHub due to size, see below.)
 * ```misc/``` - old scripts and notebooks used for data collection and analysis.
